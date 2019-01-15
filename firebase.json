@@ -14,5 +14,8 @@
                 "value": "max-age=0"
             }]
         }]
+    },
+    "functions": {
+      "source": "functions"
     }
 }

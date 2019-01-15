@@ -5,8 +5,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors')({origin: true});
 const admin = require('firebase-admin');
+const moment = require('moment');
 const googleMapsClient = require('@google/maps').createClient({
-  key: 'AIzaSyDJjuf5Cli-bjDPh_lWLhPoSqy7UPCr0xM',
+  key: functions.config().googlemap.key,
   Promise: Promise
 });
 const axios = require('axios');
@@ -14,6 +15,9 @@ const yelpInstance = axios.create({
   baseURL: 'https://api.yelp.com/v3/',
   headers: {'Authorization': 'Bearer w5Ac-Db5r7Vm0r9Ne4_f573HLMjTvmZR4gpmvoS_qbhgvvuFDOXFhA7qyEMQhEhuFrlRyhWiYpKD3owRXZ1jZBFmqnDx-eP0rVJEa8SWSdxnpV81wzrXdhZeSvbfWnYx'}
 });
+const { authMiddleware } = require('../utils/authHelper');
+const {sendInvitation} = require('../utils/mailClient');
+
 
 const _ = require('lodash');
 const onProviderUpdate = require('./event_hooks/onUpdate');
@@ -122,6 +126,49 @@ app.get('/yelp/search', (req, res) => {
     console.log(error);
     return res.json([]);
   });
+});
+
+app.post('/invitations', authMiddleware, ({body}, res) => {
+  if (!res.locals.authData) {
+    return res.status(400).json({error: 'invalid providers'});
+  }
+  const {authData: {moverId}, error} = res.locals;
+  const {email} = body;
+  if (!email) {
+    console.log('empty email');
+    return res.status(400).json({error: 'empty email'});
+  }
+  if (error) {
+    console.log(error.message);
+    return res.status(500).json({error: error.message});
+  }
+  admin.firestore().collection('providers').doc(moverId).get().then((providerRef) => {
+    const invitation = {
+      email,
+      expiry: moment().add(7, 'day').toISOString(),
+      provider: providerRef.id
+    };
+    const {name} = providerRef.data();
+    invitation[providerRef.id] = providerRef.ref;
+    admin.firestore().collection('invitations').doc().set(invitation);
+    sendInvitation('http://inneed.ca', name, email);
+    res.sendStatus(200);
+  }).catch(error => res.status(500).json({error: error.message}));
+});
+
+app.get('/invitations', authMiddleware, (req, res) => {
+  if (!res.locals.authData) {
+    return res.status(400).json({error: 'invalid providers'});
+  }
+  const {authData: {moverId}, error} = res.locals;
+  admin.firestore().collection('invitations').where('provider', '==', moverId).get().then((invitations) => {
+    const result = [];
+    invitations.forEach(invitation => {
+      const {email, expiry} = invitation.data();
+      result.push({email, expiry});
+    });
+    res.json(result);
+  }).catch(error => res.status(500).json({error: error.message}));
 });
 
 module.exports = () => {

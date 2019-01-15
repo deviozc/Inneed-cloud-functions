@@ -35,6 +35,19 @@ module.exports = {
     };
     return sgMail.send(msg);
   },
+  sendInvitation: (to, providerName, url) => {
+    const msg = {
+      to,
+      from: 'InNeed<noreply@inneed.ca>',
+      subject: `${providerName} invite you to join`,
+      templateId: 'ee98176e-dd85-4ed1-9481-70b23d90e9cb',
+      substitutions: {
+        url,
+        name: providerName
+      }
+    };
+    return sgMail.send(msg);
+  },
   sendNewProviderEmails: (receivers, projectId) => {
     const msgs = Object.keys(receivers).map( receiverId => {
       const receiver = receivers[receiverId];

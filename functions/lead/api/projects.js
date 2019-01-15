@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors')({origin: true});
 const admin = require('firebase-admin');
 const constants = require('../constants');
+const {getProviderId} = require('../../utils/authHelper');
 
 const app = express();
 
@@ -60,6 +61,7 @@ const processProject = (projectRef, moverData) => {
   delete data.receivers;
 
   if (!data.receiver) {
+    // mover id from auth token doesn't match project provider
     return Promise.reject('invalid provider');
   }
   data.receiver.provider = data.receiver.provider.id;
@@ -302,36 +304,6 @@ app.put('/:projectId/', (request, response) => {
   }
   return response.json(request.body);
 });
-
-const getProviderId = (request) =>{
-  let idToken;
-  if (request.headers.authorization && request.headers.authorization.startsWith('Bearer ')) {
-    // Read the ID Token from the Authorization header.
-    idToken = request.headers.authorization.split('Bearer ')[1];
-  } else {
-    // Read the ID Token from cookie.
-    idToken = request.cookies && request.cookies.__session;
-  }
-
-  if(!idToken || !request.headers.provider) {
-    return Promise.resolve('');
-  }
-  return admin.auth().verifyIdToken(idToken)
-    .then((decodedToken) => {
-      const uid = decodedToken.uid;
-      return admin.firestore().collection('users').doc(uid).get();
-    })
-    // TODO: check if provider belongs to user
-    .then((user) => {
-      return {
-        moverId: request.headers.provider,
-        userId: user.id
-      };
-    })
-    .catch((error)=> {
-      return Promise.reject(error);
-    });
-};
 
 const handleAcceptLead = (body, projectId, userData, response) => {
   if (!userData.moverId) {
