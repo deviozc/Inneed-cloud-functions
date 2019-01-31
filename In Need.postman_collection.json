@@ -1,0 +1,125 @@
+{
+	"info": {
+		"_postman_id": "ee06fc48-d822-4eb9-9484-8365f3499b1b",
+		"name": "In Need",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Providers",
+			"item": [
+				{
+					"name": "POST invitations",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "provider",
+								"value": "pvGo1U1bJUdePER99dPF",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\": \"deviozc@gmail.com\"}"
+						},
+						"url": {
+							"raw": "https://us-central1-comment-on-85597.cloudfunctions.net/providers/invitations/",
+							"protocol": "https",
+							"host": [
+								"us-central1-comment-on-85597",
+								"cloudfunctions",
+								"net"
+							],
+							"path": [
+								"providers",
+								"invitations",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET invitations",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "provider",
+								"type": "text",
+								"value": "pvGo1U1bJUdePER99dPF"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\": \"deviozc@gmail.com\"}"
+						},
+						"url": {
+							"raw": "https://us-central1-comment-on-85597.cloudfunctions.net/providers/invitations/",
+							"protocol": "https",
+							"host": [
+								"us-central1-comment-on-85597",
+								"cloudfunctions",
+								"net"
+							],
+							"path": [
+								"providers",
+								"invitations",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "06240173-af73-47d8-bf83-807dded804db",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cceb7b4-f9b1-44c1-a55d-f304f6d62b76",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	]
+}

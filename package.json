@@ -23,7 +23,22 @@
   "scripts": {
     "serve": "firebase serve --only=functions",
     "deploy": "firebase deploy --only=functions",
-    "setup": "firebase functions:config:get > .runtimeconfig.json"
+    "setup": "firebase functions:config:get > functions/.runtimeconfig.json"
   },
-  "private": true
+  "private": true,
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deviozc/Inneed-cloud-functions.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/deviozc/Inneed-cloud-functions/issues"
+  },
+  "homepage": "https://github.com/deviozc/Inneed-cloud-functions#readme"
 }

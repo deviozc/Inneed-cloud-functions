@@ -151,7 +151,7 @@ app.post('/invitations', authMiddleware, ({body}, res) => {
     const {name} = providerRef.data();
     invitation[providerRef.id] = providerRef.ref;
     admin.firestore().collection('invitations').doc().set(invitation);
-    sendInvitation('http://inneed.ca', name, email);
+    sendInvitation(email, name, 'http://inneed.ca');
     res.sendStatus(200);
   }).catch(error => res.status(500).json({error: error.message}));
 });

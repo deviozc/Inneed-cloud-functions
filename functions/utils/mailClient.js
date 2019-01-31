@@ -40,13 +40,15 @@ module.exports = {
       to,
       from: 'InNeed<noreply@inneed.ca>',
       subject: `${providerName} invite you to join`,
-      templateId: 'ee98176e-dd85-4ed1-9481-70b23d90e9cb',
+      templateId: 'fca73a96-e0bc-4815-adfc-b4a2a1dcedaa',
+      text: 'You have a new invitation!',
+      html: '<p>You have a new invitation!</p>',
       substitutions: {
         url,
         name: providerName
       }
     };
-    return sgMail.send(msg);
+    return sgMail.send(msg).catch(err => console.log(err.message));
   },
   sendNewProviderEmails: (receivers, projectId) => {
     const msgs = Object.keys(receivers).map( receiverId => {

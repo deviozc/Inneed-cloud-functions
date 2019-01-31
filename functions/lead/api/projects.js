@@ -29,9 +29,13 @@ app.get('/', (request, response) => {
     .then(userData =>
       admin.firestore().collection('providers').doc(userData.moverId).get().then(d => ({userData, provider: d.data()}))
     )
-    .then(({ userData, provider: { projects } }) =>
+    .then(({ userData, provider }) => {
+      const projects = provider.projects;
+      if (!projects) {
+        throw new Error('No projects');
+      }
       Promise.all(Object.keys(projects).map(key => projects[key].get())).then(projects => ({userData, projects}))
-    )
+    })
     .then(({userData, projects}) => Promise.all(projects.map(p => processProject(p, userData))))
     .then(result => {
       if (filterStartDate && filterEndDate) {
@@ -47,7 +51,7 @@ app.get('/', (request, response) => {
     })
     .catch(err => {
       console.error(err);
-      response.status(500).send(err);
+      response.status(404).send(err);
     });
 });
 
